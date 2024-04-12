@@ -85,8 +85,16 @@ int
 freemem_size(void){
   struct run *r;
   int num = 0;
-  for(r = kmem.freelist; r; r = r->next){
+
+  acquire(&kmem.lock);
+  r = kmem.freelist;
+  while(r){
+    r = r->next;
     num++;
   }
+    
+  release(&kmem.lock);
+
   return num * PGSIZE; 
+
 }
